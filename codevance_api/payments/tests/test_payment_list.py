@@ -1,37 +1,9 @@
-from datetime import timedelta, date
-
 import pytest
 
 from codevance_api.payments.models import Payment
 from rest_framework.status import HTTP_200_OK
 
 from codevance_api.payments.serializers import PaymentSerializer
-
-
-@pytest.fixture
-def payment_supplier_01(supplier_01):
-    """
-    Creates and returns a payment that
-    belongs to supplier 01.
-    """
-    due_date = date.today() + timedelta(days=10)
-    payment = Payment.objects.create(supplier=supplier_01,
-                                     due_date=due_date,
-                                     value=1100)
-    return payment
-
-
-@pytest.fixture
-def payment_supplier_02(supplier_02):
-    """
-    Creates and returns a payment that
-    belongs to supplier 02.
-    """
-    due_date = date.today() + timedelta(days=10)
-    payment = Payment.objects.create(supplier=supplier_02,
-                                     due_date=due_date,
-                                     value=1200)
-    return payment
 
 
 @pytest.fixture
