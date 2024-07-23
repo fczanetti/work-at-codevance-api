@@ -11,7 +11,7 @@ class Supplier(models.Model):
 
 class Payment(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
-    creation_date = models.DateField(blank=True)
+    creation_date = models.DateField(auto_now_add=True)
     due_date = models.DateField()
     value = models.DecimalField(max_digits=11, decimal_places=2)
 
