@@ -80,17 +80,23 @@ def test_bad_request_cases(auth_operator_01, supplier_01):
     is returned if invalid values are filled.
     """
     due_date = date.today() + timedelta(days=10)
+    invalid_due_date = date.today() - timedelta(days=1)
     # without supplier
     data_01 = {'due_date': due_date, 'value': 1000, 'creation_date': date.today()}
     # Invalid supplier ID
     data_02 = {'supplier': 12345, 'due_date': due_date, 'value': 1000, 'creation_date': date.today()}
     # Negative value
     data_03 = {'supplier': supplier_01.pk, 'due_date': due_date, 'value': -10, 'creation_date': date.today()}
+    # due_date before day of creation
+    data_04 = {'supplier': supplier_01.pk, 'due_date': invalid_due_date,
+               'value': 1000, 'creation_date': date.today()}
 
     resp_01 = auth_operator_01.post('/api/payments/', data=data_01)
     resp_02 = auth_operator_01.post('/api/payments/', data=data_02)
     resp_03 = auth_operator_01.post('/api/payments/', data=data_03)
+    resp_04 = auth_operator_01.post('/api/payments/', data=data_04)
 
     assert resp_01.status_code == HTTP_400_BAD_REQUEST
     assert resp_02.status_code == HTTP_400_BAD_REQUEST
     assert resp_03.status_code == HTTP_400_BAD_REQUEST
+    assert resp_04.status_code == HTTP_400_BAD_REQUEST
