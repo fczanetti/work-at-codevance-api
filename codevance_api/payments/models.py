@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 
 
 class Supplier(models.Model):
-    cnpj_help_text = "Only numbers"
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     corporate_name = models.CharField(max_length=128)
     reg_number = models.CharField(max_length=14, verbose_name='Company Registration Number',
