@@ -1,3 +1,11 @@
-# from django.shortcuts import render
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
+from codevance_api.payments.models import Payment
+from codevance_api.payments.serializers import PaymentSerializer
+
+
+class PaymentListCreate(generics.ListCreateAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated]
