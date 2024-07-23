@@ -6,6 +6,12 @@ from codevance_api.payments.serializers import PaymentSerializer
 
 
 class PaymentListCreate(generics.ListCreateAPIView):
-    queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_operator:
+            return Payment.objects.filter(supplier__user=user).order_by('-creation_date')
+        else:
+            return Payment.objects.all().order_by('-creation_date')
