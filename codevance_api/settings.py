@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'codevance_api.base'
+    'codevance_api.base',
+    'codevance_api.payments'
 ]
 
 MIDDLEWARE = [
