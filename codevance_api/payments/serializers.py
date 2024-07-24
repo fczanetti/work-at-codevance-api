@@ -1,5 +1,3 @@
-from datetime import date
-
 from rest_framework import serializers
 
 from codevance_api.payments.models import Payment, Supplier, Anticipation
@@ -20,15 +18,6 @@ class PaymentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Make sure the value is greater than zero.")
         return value
 
-    def validate_due_date(self, value):
-        """
-        Certifies the due_date informed is not
-        before the day of payment creation.
-        """
-        if not value >= date.today():
-            raise serializers.ValidationError("Inform a date greater than or equal today.")
-        return value
-
 
 class AnticipationSerializer(serializers.ModelSerializer):
     payment = serializers.PrimaryKeyRelatedField(queryset=Payment.objects.all())
@@ -36,3 +25,4 @@ class AnticipationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anticipation
         fields = ['payment', 'creation_date', 'new_due_date', 'new_value', 'update_date', 'status']
+        read_only_fields = ['new_value']
