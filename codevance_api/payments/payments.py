@@ -2,7 +2,7 @@ from decimal import Decimal
 from datetime import date
 
 from codevance_api.payments.models import Payment
-from codevance_api.payments.serializers import AnticipationSerializer
+from codevance_api.payments.serializers import AnticipationSerializer, PaymentSerializer
 
 
 def calc_new_value(payment_id, new_date):
@@ -32,4 +32,22 @@ def create_anticipation(request):
         new_value = calc_new_value(payment_id, new_due_date.isoformat())
 
         serializer.save(new_value=new_value)
+        return serializer.data
+
+
+def create_payment(request):
+    """
+    Creates a payment and returns its data.
+
+    """
+    data = request.data.copy()
+
+    # Get the correct supplier ID if it is a
+    # supplier creating a new payment
+    if not request.user.is_operator:
+        data['supplier'] = request.user.supplier.pk
+
+    serializer = PaymentSerializer(data=data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
         return serializer.data

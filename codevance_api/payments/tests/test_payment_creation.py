@@ -62,16 +62,41 @@ def test_bad_request_cases(auth_operator_01, auth_supplier_01, supplier_01, supp
     data_02 = {'due_date': due_date, 'value': 1000}  # Invalid supplier ID
     data_03 = {'supplier': supplier_01.pk, 'due_date': due_date, 'value': -10}  # Negative value
     data_04 = {'supplier': supplier_01.pk, 'due_date': invalid_due_date, 'value': 1000}  # invalid due_date
-    data_05 = {'supplier': supplier_02.pk, 'due_date': due_date, 'value': 1000}  # invalid supplier's ID
 
     resp_01 = auth_operator_01.post('/api/payments/', data=data_01)
     resp_02 = auth_operator_01.post('/api/payments/', data=data_02)
     resp_03 = auth_operator_01.post('/api/payments/', data=data_03)
     resp_04 = auth_operator_01.post('/api/payments/', data=data_04)
-    resp_05 = auth_supplier_01.post('/api/payments/', data=data_05)
 
     assert resp_01.status_code == HTTP_400_BAD_REQUEST
     assert resp_02.status_code == HTTP_400_BAD_REQUEST
     assert resp_03.status_code == HTTP_400_BAD_REQUEST
     assert resp_04.status_code == HTTP_400_BAD_REQUEST
-    assert resp_05.status_code == HTTP_400_BAD_REQUEST
+
+
+def test_payment_created_correctly_with_wrong_supplier_id(auth_supplier_01, supplier_02, supplier_01):
+    """
+    Certifies that, even if a supplier inform the wrong ID when
+    creating a payment, the payment is created correctly (related
+    to him and not to others).
+    """
+    due_date = date.today() + timedelta(days=10)
+    data = {'supplier': supplier_02.pk, 'due_date': due_date, 'value': 1122.33}  # invalid supplier's ID
+    resp = auth_supplier_01.post('/api/payments/', data=data)
+
+    assert resp.status_code == HTTP_201_CREATED
+    assert Payment.objects.filter(value=1122.33).filter(supplier=supplier_01).exists()
+    assert not Payment.objects.filter(value=1122.33).filter(supplier=supplier_02).exists()
+
+
+def test_payment_created_if_supplier_do_not_inform_his_id(auth_supplier_01):
+    """
+    If a supplier tries to create a payment without informing
+    his ID, he has to be identified automatically.
+    """
+    due_date = date.today() + timedelta(days=10)
+    data = {'due_date': due_date, 'value': 1245.35}
+    resp = auth_supplier_01.post('/api/payments/', data=data)
+
+    assert resp.status_code == HTTP_201_CREATED
+    assert Payment.objects.filter(value=1245.35).exists()
