@@ -18,18 +18,6 @@ class PaymentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Make sure the value is greater than zero.")
         return value
 
-    def validate_supplier(self, value):
-        """
-        Certifies a supplier can not create payments
-        for others.
-        """
-        user = self.context['request'].user
-        if user.is_operator:
-            return value
-        if not Supplier.objects.filter(id=value.pk).filter(user=user).exists():
-            raise serializers.ValidationError("Make sure you informed a valid supplier ID.")
-        return value
-
 
 class AnticipationSerializer(serializers.ModelSerializer):
     payment = serializers.PrimaryKeyRelatedField(queryset=Payment.objects.all())

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
 from codevance_api.payments.models import Payment
-from codevance_api.payments.payments import create_anticipation
+from codevance_api.payments.payments import create_anticipation, create_payment
 from codevance_api.payments.serializers import PaymentSerializer, AnticipationSerializer
 
 
@@ -18,6 +18,10 @@ class PaymentListCreate(generics.ListCreateAPIView):
             return Payment.objects.filter(supplier__user=user).order_by('-creation_date')
         else:
             return Payment.objects.all().order_by('-creation_date')
+
+    def post(self, request, *args, **kwargs):
+        new_payment_data = create_payment(self.request)
+        return Response(new_payment_data, status=HTTP_201_CREATED)
 
 
 class AnticipationCreate(generics.CreateAPIView):
