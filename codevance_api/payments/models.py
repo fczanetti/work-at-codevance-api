@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from codevance_api.payments.validators import date_not_before_today
+
 
 class Supplier(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
@@ -12,7 +14,7 @@ class Supplier(models.Model):
 class Payment(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     creation_date = models.DateField(auto_now_add=True)
-    due_date = models.DateField()
+    due_date = models.DateField(validators=[date_not_before_today])
     value = models.DecimalField(max_digits=11, decimal_places=2)
 
 
@@ -22,7 +24,7 @@ class Anticipation(models.Model):
                       'D': 'Denied'}
     payment = models.OneToOneField(Payment, on_delete=models.CASCADE)
     creation_date = models.DateField(auto_now_add=True)
-    new_due_date = models.DateField()
+    new_due_date = models.DateField(validators=[date_not_before_today])
     new_value = models.DecimalField(max_digits=11, decimal_places=2)
     update_date = models.DateField(auto_now=True)
     status = models.CharField(choices=STATUS_CHOICES, default='PC', editable=False, max_length=25)

@@ -3,25 +3,6 @@ from datetime import date
 
 from codevance_api.payments.models import Payment
 from codevance_api.payments.serializers import AnticipationSerializer
-from rest_framework.serializers import ValidationError
-
-
-def validate_date(dt):
-    """
-    Certifies the date (dt) informed:
-    - is greater than or equal today;
-    - has the expected ISO 8601 format.
-    """
-    if dt is None:
-        raise ValidationError('You have to inform a date.')
-
-    try:
-        date.fromisoformat(dt)
-    except ValueError:
-        raise ValidationError('Make sure the date informed is in the correct format (YYYY-MM-DD).')
-
-    if not date.fromisoformat(dt) >= date.today():
-        raise ValidationError("Inform a date greater than or equal today.")
 
 
 def calc_new_value(payment_id, new_date):
@@ -43,14 +24,13 @@ def create_anticipation(request):
     data = request.data.copy()
     payment_id = data.get('payment')
 
-    new_due_date = data.get('new_due_date')
-    validate_date(new_due_date)
-
-    # Calculate new value
-    new_value = calc_new_value(payment_id, new_due_date)
-    data['new_value'] = new_value
-
     serializer = AnticipationSerializer(data=data)
     if serializer.is_valid(raise_exception=True):
-        serializer.save()
+
+        new_due_date = serializer.validated_data['new_due_date']
+
+        new_value = calc_new_value(payment_id, new_due_date.isoformat())
+        data['new_value'] = new_value
+
+        serializer.save(new_value=new_value)
         return serializer.data
