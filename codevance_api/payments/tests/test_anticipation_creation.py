@@ -1,7 +1,7 @@
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
-from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
+from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST
 from rest_framework.test import APIClient
 
 from codevance_api.payments.models import Anticipation
@@ -50,3 +50,24 @@ def test_unauthenticated_user_can_not_create_anticipation(payment_supplier_01):
     data = {'payment': payment_supplier_01.pk, 'new_due_date': new_due_date}
     resp = client.post('/api/anticipations/', data=data)
     assert resp.status_code == HTTP_403_FORBIDDEN
+
+
+def test_invalid_requests(auth_operator_01, payment_supplier_01):
+    """
+    Certifies that invalid requests return a
+    400 status code response.
+    """
+    invalid_date = date.today() - timedelta(days=1)
+    invalid_format_date = date.today().strftime('%d/%m/%Y')
+
+    data_01 = {'payment': payment_supplier_01.pk, 'new_due_date': invalid_date}  # invalid new_due_date
+    data_02 = {'payment': payment_supplier_01.pk, 'new_due_date': invalid_format_date}  # invalid new_due_date format
+    data_03 = {'payment': payment_supplier_01.pk}  # new_due_date not informed
+
+    resp_01 = auth_operator_01.post('/api/anticipations/', data=data_01)
+    resp_02 = auth_operator_01.post('/api/anticipations/', data=data_02)
+    resp_03 = auth_operator_01.post('/api/anticipations/', data=data_03)
+
+    assert resp_01.status_code == HTTP_400_BAD_REQUEST
+    assert resp_02.status_code == HTTP_400_BAD_REQUEST
+    assert resp_03.status_code == HTTP_400_BAD_REQUEST
