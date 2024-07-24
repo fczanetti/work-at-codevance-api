@@ -52,22 +52,35 @@ def test_unauthenticated_user_can_not_create_anticipation(payment_supplier_01):
     assert resp.status_code == HTTP_403_FORBIDDEN
 
 
-def test_invalid_requests(auth_operator_01, payment_supplier_01):
+def test_invalid_requests(auth_operator_01,
+                          payment_supplier_01,
+                          payment_supplier_02,
+                          auth_supplier_01):
     """
     Certifies that invalid requests return a
     400 status code response.
     """
+    new_due_date = date.today()
     invalid_date = date.today() - timedelta(days=1)
     invalid_format_date = date.today().strftime('%d/%m/%Y')
 
     data_01 = {'payment': payment_supplier_01.pk, 'new_due_date': invalid_date}  # invalid new_due_date
     data_02 = {'payment': payment_supplier_01.pk, 'new_due_date': invalid_format_date}  # invalid new_due_date format
     data_03 = {'payment': payment_supplier_01.pk}  # new_due_date not informed
+    data_04 = {'payment': payment_supplier_02.pk, 'new_due_date': new_due_date}  # invalid payment (from other supplier)
+    data_05 = {'payment': 12345, 'new_due_date': new_due_date}  # nonexistent payment_id
+    data_06 = {'new_due_date': new_due_date}  # payment_id not informed
 
     resp_01 = auth_operator_01.post('/api/anticipations/', data=data_01)
     resp_02 = auth_operator_01.post('/api/anticipations/', data=data_02)
     resp_03 = auth_operator_01.post('/api/anticipations/', data=data_03)
+    resp_04 = auth_supplier_01.post('/api/anticipations/', data=data_04)
+    resp_05 = auth_supplier_01.post('/api/anticipations/', data=data_05)
+    resp_06 = auth_supplier_01.post('/api/anticipations/', data=data_06)
 
     assert resp_01.status_code == HTTP_400_BAD_REQUEST
     assert resp_02.status_code == HTTP_400_BAD_REQUEST
     assert resp_03.status_code == HTTP_400_BAD_REQUEST
+    assert resp_04.status_code == HTTP_400_BAD_REQUEST
+    assert resp_05.status_code == HTTP_400_BAD_REQUEST
+    assert resp_06.status_code == HTTP_400_BAD_REQUEST
