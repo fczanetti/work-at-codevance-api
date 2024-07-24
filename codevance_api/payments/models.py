@@ -21,7 +21,7 @@ class Anticipation(models.Model):
                       'PC': 'Pending confirmation',
                       'D': 'Denied'}
     payment = models.OneToOneField(Payment, on_delete=models.CASCADE)
-    creation_date = models.DateField()
+    creation_date = models.DateField(auto_now_add=True)
     new_due_date = models.DateField()
     new_value = models.DecimalField(max_digits=11, decimal_places=2)
     update_date = models.DateField(auto_now=True)
