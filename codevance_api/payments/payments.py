@@ -22,15 +22,14 @@ def create_anticipation(request):
     Creates an anticipation and returns its data.
     """
     data = request.data.copy()
-    payment_id = data.get('payment')
 
-    serializer = AnticipationSerializer(data=data)
+    serializer = AnticipationSerializer(data=data, context={'request': request})
     if serializer.is_valid(raise_exception=True):
 
+        payment_id = serializer.validated_data['payment'].pk
         new_due_date = serializer.validated_data['new_due_date']
 
         new_value = calc_new_value(payment_id, new_due_date.isoformat())
-        data['new_value'] = new_value
 
         serializer.save(new_value=new_value)
         return serializer.data

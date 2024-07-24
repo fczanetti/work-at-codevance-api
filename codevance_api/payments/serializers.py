@@ -26,3 +26,16 @@ class AnticipationSerializer(serializers.ModelSerializer):
         model = Anticipation
         fields = ['payment', 'creation_date', 'new_due_date', 'new_value', 'update_date', 'status']
         read_only_fields = ['new_value']
+
+    def validate_payment(self, value):
+        """
+        Certifies that the payment_id informed
+        belongs to the supplier creating the
+        anticipation.
+        """
+        user = self.context['request'].user
+        if user.is_operator:
+            return value
+        if not Payment.objects.filter(id=value.pk).filter(supplier__user__email=user.email).exists():
+            raise serializers.ValidationError("Make sure you informed a valid payment ID.")
+        return value
