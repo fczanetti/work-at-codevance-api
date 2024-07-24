@@ -1,8 +1,11 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.status import HTTP_201_CREATED
 
 from codevance_api.payments.models import Payment
-from codevance_api.payments.serializers import PaymentSerializer
+from codevance_api.payments.payments import create_anticipation
+from codevance_api.payments.serializers import PaymentSerializer, AnticipationSerializer
 
 
 class PaymentListCreate(generics.ListCreateAPIView):
@@ -15,3 +18,12 @@ class PaymentListCreate(generics.ListCreateAPIView):
             return Payment.objects.filter(supplier__user=user).order_by('-creation_date')
         else:
             return Payment.objects.all().order_by('-creation_date')
+
+
+class AnticipationCreate(generics.CreateAPIView):
+    serializer_class = AnticipationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        new_anticipation_data = create_anticipation(self.request)
+        return Response(new_anticipation_data, status=HTTP_201_CREATED)
