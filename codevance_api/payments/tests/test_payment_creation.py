@@ -50,7 +50,7 @@ def test_unauth_users_can_not_create_payments(supplier_01):
     assert resp.status_code == HTTP_403_FORBIDDEN
 
 
-def test_bad_request_cases(auth_operator_01, supplier_01):
+def test_bad_request_cases(auth_operator_01, auth_supplier_01, supplier_01, supplier_02):
     """
     Certifies that a response with 400 status code
     is returned if invalid values are filled.
@@ -59,16 +59,19 @@ def test_bad_request_cases(auth_operator_01, supplier_01):
     invalid_due_date = date.today() - timedelta(days=1)
 
     data_01 = {'due_date': due_date, 'value': 1000}  # without supplier
-    data_02 = {'supplier': 12345, 'due_date': due_date, 'value': 1000}  # Invalid supplier ID
+    data_02 = {'due_date': due_date, 'value': 1000}  # Invalid supplier ID
     data_03 = {'supplier': supplier_01.pk, 'due_date': due_date, 'value': -10}  # Negative value
     data_04 = {'supplier': supplier_01.pk, 'due_date': invalid_due_date, 'value': 1000}  # invalid due_date
+    data_05 = {'supplier': supplier_02.pk, 'due_date': due_date, 'value': 1000}  # invalid supplier's ID
 
     resp_01 = auth_operator_01.post('/api/payments/', data=data_01)
     resp_02 = auth_operator_01.post('/api/payments/', data=data_02)
     resp_03 = auth_operator_01.post('/api/payments/', data=data_03)
     resp_04 = auth_operator_01.post('/api/payments/', data=data_04)
+    resp_05 = auth_supplier_01.post('/api/payments/', data=data_05)
 
     assert resp_01.status_code == HTTP_400_BAD_REQUEST
     assert resp_02.status_code == HTTP_400_BAD_REQUEST
     assert resp_03.status_code == HTTP_400_BAD_REQUEST
     assert resp_04.status_code == HTTP_400_BAD_REQUEST
+    assert resp_05.status_code == HTTP_400_BAD_REQUEST
