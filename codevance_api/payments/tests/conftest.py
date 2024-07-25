@@ -79,3 +79,17 @@ def payment_supplier_02(supplier_02):
                                      due_date=due_date,
                                      value=1200)
     return payment
+
+
+@pytest.fixture
+def auth_common_user(db):
+    """
+    Creates and returns a user that is not
+    related to a supplier and is not an operator
+    either.
+    """
+    User = get_user_model()
+    user = User.objects.create(email='common_user@email.com')
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return client

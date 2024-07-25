@@ -84,3 +84,14 @@ def test_invalid_requests(auth_operator_01,
     assert resp_04.status_code == HTTP_400_BAD_REQUEST
     assert resp_05.status_code == HTTP_400_BAD_REQUEST
     assert resp_06.status_code == HTTP_400_BAD_REQUEST
+
+
+def test_common_user_requests_not_allowed(auth_common_user, payment_supplier_01):
+    """
+    Certifies that users that are neither suppliers
+    nor operators can not list payments.
+    """
+    new_due_date = date.today()
+    data = {'payment': payment_supplier_01.pk, 'new_due_date': new_due_date}
+    resp = auth_common_user.post('/api/anticipations/', data=data)
+    assert resp.status_code == HTTP_403_FORBIDDEN
