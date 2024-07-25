@@ -59,7 +59,7 @@ def test_bad_request_cases(auth_operator_01, auth_supplier_01, supplier_01, supp
     invalid_due_date = date.today() - timedelta(days=1)
 
     data_01 = {'due_date': due_date, 'value': 1000}  # without supplier
-    data_02 = {'due_date': due_date, 'value': 1000}  # Invalid supplier ID
+    data_02 = {'supplier': 12345, 'due_date': due_date, 'value': 1000}  # Invalid supplier ID
     data_03 = {'supplier': supplier_01.pk, 'due_date': due_date, 'value': -10}  # Negative value
     data_04 = {'supplier': supplier_01.pk, 'due_date': invalid_due_date, 'value': 1000}  # invalid due_date
 

@@ -1,8 +1,9 @@
 from django.urls import path
 
-from codevance_api.payments.views import PaymentListCreate, AnticipationCreate
+from codevance_api.payments.views import PaymentListCreate, AnticipationCreate, AnticipationUpdate
 
 urlpatterns = [
     path('payments/', PaymentListCreate.as_view()),
-    path('anticipations/', AnticipationCreate.as_view())
+    path('anticipations/', AnticipationCreate.as_view()),
+    path('anticipations/<int:pk>/', AnticipationUpdate.as_view())
 ]

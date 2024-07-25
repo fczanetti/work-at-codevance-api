@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
-from codevance_api.payments.models import Payment
+from codevance_api.payments.models import Payment, Anticipation
 from codevance_api.payments.payments import create_anticipation, create_payment
 from codevance_api.payments.serializers import PaymentSerializer, AnticipationSerializer
 
@@ -31,3 +31,15 @@ class AnticipationCreate(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         new_anticipation_data = create_anticipation(self.request)
         return Response(new_anticipation_data, status=HTTP_201_CREATED)
+
+
+class AnticipationUpdate(generics.UpdateAPIView):
+    serializer_class = AnticipationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        id = self.kwargs['pk']
+        user = self.request.user
+        if user.is_operator:
+            return Anticipation.objects.filter(id=id)
+        return Anticipation.objects.filter(payment__supplier__user=user).filter(id=id)
