@@ -27,4 +27,4 @@ class Anticipation(models.Model):
     new_due_date = models.DateField(validators=[date_not_before_today])
     new_value = models.DecimalField(max_digits=11, decimal_places=2)
     update_date = models.DateField(auto_now=True)
-    status = models.CharField(choices=STATUS_CHOICES, default='PC', editable=False, max_length=25)
+    status = models.CharField(choices=STATUS_CHOICES, default='PC', max_length=25)
