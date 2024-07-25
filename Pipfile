@@ -10,6 +10,7 @@ djangorestframework = "*"
 python-decouple = "*"
 dj-database-url = "*"
 psycopg2 = "*"
+celery = "*"
 
 [dev-packages]
 flake8 = "*"
