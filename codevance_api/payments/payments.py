@@ -1,7 +1,7 @@
 from decimal import Decimal
 from datetime import date
 
-from codevance_api.payments.models import Payment
+from codevance_api.payments.models import Payment, RequestLog
 from codevance_api.payments.serializers import AnticipationSerializer, PaymentSerializer
 
 
@@ -25,13 +25,11 @@ def create_anticipation(request):
 
     serializer = AnticipationSerializer(data=data, context={'request': request})
     if serializer.is_valid(raise_exception=True):
-
         payment_id = serializer.validated_data['payment'].pk
         new_due_date = serializer.validated_data['new_due_date']
-
         new_value = calc_new_value(payment_id, new_due_date.isoformat())
-
         serializer.save(new_value=new_value)
+        RequestLog.objects.create(anticipation=serializer.instance, user=request.user, action='R')
         return serializer.data
 
 

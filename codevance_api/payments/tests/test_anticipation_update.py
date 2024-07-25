@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from codevance_api.payments.models import Anticipation
+from codevance_api.payments.models import Anticipation, RequestLog
 from codevance_api.payments.payments import calc_new_value
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN
 from rest_framework.test import APIClient
@@ -103,3 +103,12 @@ def test_common_user_requests_not_allowed(auth_common_user, anticipation_payment
     data = {'status': 'A'}
     resp = auth_common_user.patch(f'/api/anticipations/{anticipation_payment_supp_01.pk}/', data=data)
     assert resp.status_code == HTTP_403_FORBIDDEN
+
+
+def test_log_created_after_updating_an_anticipation(
+        resp_update_anticip_auth_operator_01,
+        anticipation_payment_supp_01):
+    """
+    Certifies a RequestLog is created when updating an anticipation.
+    """
+    assert RequestLog.objects.filter(anticipation=anticipation_payment_supp_01, action='A').exists()
