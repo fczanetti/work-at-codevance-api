@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
-from codevance_api.payments.models import Payment, Anticipation
-from codevance_api.payments.payments import create_anticipation, create_payment
+from codevance_api.payments.models import Anticipation
+from codevance_api.payments.payments import create_anticipation, create_payment, get_custom_queryset
 from codevance_api.payments.serializers import PaymentSerializer, AnticipationSerializer
 
 
@@ -14,10 +14,9 @@ class PaymentListCreate(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        if not user.is_operator:
-            return Payment.objects.filter(supplier__user=user).order_by('-creation_date')
-        else:
-            return Payment.objects.all().order_by('-creation_date')
+        status = self.request.query_params.get('status', 'ALL')
+        queryset = get_custom_queryset(user, status)
+        return queryset
 
     def post(self, request, *args, **kwargs):
         new_payment_data = create_payment(self.request)
