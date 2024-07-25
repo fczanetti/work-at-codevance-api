@@ -5,12 +5,13 @@ from rest_framework.status import HTTP_201_CREATED
 
 from codevance_api.payments.models import Anticipation
 from codevance_api.payments.payments import create_anticipation, create_payment, get_custom_queryset
+from codevance_api.payments.permissions import RequestPermission
 from codevance_api.payments.serializers import PaymentSerializer, AnticipationSerializer
 
 
 class PaymentListCreate(generics.ListCreateAPIView):
     serializer_class = PaymentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, RequestPermission]
 
     def get_queryset(self):
         user = self.request.user
@@ -25,7 +26,7 @@ class PaymentListCreate(generics.ListCreateAPIView):
 
 class AnticipationCreate(generics.CreateAPIView):
     serializer_class = AnticipationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, RequestPermission]
 
     def post(self, request, *args, **kwargs):
         new_anticipation_data = create_anticipation(self.request)
@@ -34,7 +35,7 @@ class AnticipationCreate(generics.CreateAPIView):
 
 class AnticipationUpdate(generics.UpdateAPIView):
     serializer_class = AnticipationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, RequestPermission]
 
     def get_queryset(self):
         id = self.kwargs['pk']

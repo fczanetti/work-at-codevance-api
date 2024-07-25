@@ -1,7 +1,7 @@
 import pytest
 
 from codevance_api.payments.models import Payment
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_403_FORBIDDEN
 
 from codevance_api.payments.serializers import PaymentSerializer
 
@@ -49,3 +49,12 @@ def test_supplier_01_can_not_see_supplier_02_payments(auth_supplier_01,
     serializer_02 = PaymentSerializer(payment_02)
     assert serializer_01.data in resp.data['results']
     assert serializer_02.data not in resp.data['results']
+
+
+def test_common_user_requests_not_allowed(auth_common_user):
+    """
+    Certifies that users that are neither suppliers
+    nor operators can not list payments.
+    """
+    resp = auth_common_user.get('/api/payments/')
+    assert resp.status_code == HTTP_403_FORBIDDEN

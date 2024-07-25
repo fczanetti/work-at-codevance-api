@@ -93,3 +93,13 @@ def test_new_value_not_changed_if_tried(anticipation_payment_supp_01, auth_opera
     anticipation = Anticipation.objects.get(id=anticipation_payment_supp_01.pk)
     assert anticipation.status == 'A'
     assert anticipation.new_value == new_value_before_request  # new_value was kept the same
+
+
+def test_common_user_requests_not_allowed(auth_common_user, anticipation_payment_supp_01):
+    """
+    Certifies that users that are neither suppliers
+    nor operators can not list payments.
+    """
+    data = {'status': 'A'}
+    resp = auth_common_user.patch(f'/api/anticipations/{anticipation_payment_supp_01.pk}/', data=data)
+    assert resp.status_code == HTTP_403_FORBIDDEN
