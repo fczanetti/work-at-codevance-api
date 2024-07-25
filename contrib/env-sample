@@ -1,3 +1,12 @@
 DEBUG=True
 SECRET_KEY=secret
 ALLOWED_HOSTS=127.0.0.1, localhost
+
+DATABASE_URL=postgres://codevuser:codevpass@localhost:5432/codevdb
+POSTGRES_PASSWORD=codevpass
+POSTGRES_USER=codevuser
+POSTGRES_DB=codevdb
+
+RABBITMQ_NODENAME=my-rabbit
+RABBITMQ_DEFAULT_USER=rbuser
+RABBITMQ_DEFAULT_PASS=rbpass
