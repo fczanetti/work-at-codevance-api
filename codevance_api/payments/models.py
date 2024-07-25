@@ -28,3 +28,11 @@ class Anticipation(models.Model):
     new_value = models.DecimalField(max_digits=11, decimal_places=2)
     update_date = models.DateField(auto_now=True)
     status = models.CharField(choices=STATUS_CHOICES, default='PC', max_length=25)
+
+
+class RequestLog(models.Model):
+    ACTION_CHOICES = {'A': 'Approval', 'D': 'Denial', 'R': 'Request'}
+    anticipation = models.ForeignKey(Anticipation, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True, verbose_name='Registered in')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    action = models.CharField(choices=ACTION_CHOICES, max_length=8)
