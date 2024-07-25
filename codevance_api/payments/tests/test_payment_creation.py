@@ -31,7 +31,8 @@ def test_payment_returned_in_response(resp_payment_creation_auth_operator_01, su
     """
     payment = Payment.objects.filter(supplier=supplier_01).first()
     serializer = PaymentSerializer(payment)
-    payment_data = {'supplier': serializer.data['supplier'],
+    payment_data = {'id': serializer.data['id'],
+                    'supplier': serializer.data['supplier'],
                     'creation_date': serializer.data['creation_date'],
                     'due_date': serializer.data['due_date'],
                     'value': serializer.data['value']}

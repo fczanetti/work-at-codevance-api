@@ -8,7 +8,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = ['supplier', 'creation_date', 'due_date', 'value']
+        fields = ['id', 'supplier', 'creation_date', 'due_date', 'value']
 
     def validate_value(self, value):
         """
@@ -24,7 +24,7 @@ class AnticipationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Anticipation
-        fields = ['payment', 'creation_date', 'new_due_date', 'new_value', 'update_date', 'status']
+        fields = ['id', 'payment', 'creation_date', 'new_due_date', 'new_value', 'update_date', 'status']
         read_only_fields = ['new_value']
 
     def validate_payment(self, value):

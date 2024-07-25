@@ -3,6 +3,7 @@ from datetime import date
 
 from codevance_api.payments.models import Payment, RequestLog
 from codevance_api.payments.serializers import AnticipationSerializer, PaymentSerializer
+from codevance_api.payments.tasks import send_email
 
 
 def calc_new_value(payment_id, new_date):
@@ -30,6 +31,11 @@ def create_anticipation(request):
         new_value = calc_new_value(payment_id, new_due_date.isoformat())
         serializer.save(new_value=new_value)
         RequestLog.objects.create(anticipation=serializer.instance, user=request.user, action='R')
+
+        send_email.delay_on_commit(sub='new_ant',
+                                   recipient=[f'{serializer.instance.payment.supplier.user.email}'],
+                                   ant_id=serializer.instance.id)
+
         return serializer.data
 
 

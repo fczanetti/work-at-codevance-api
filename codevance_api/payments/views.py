@@ -7,6 +7,7 @@ from codevance_api.payments.models import Anticipation, RequestLog
 from codevance_api.payments.payments import create_anticipation, create_payment, get_custom_queryset
 from codevance_api.payments.permissions import RequestPermission
 from codevance_api.payments.serializers import PaymentSerializer, AnticipationSerializer
+from codevance_api.payments.tasks import send_email
 
 
 class PaymentListCreate(generics.ListCreateAPIView):
@@ -46,6 +47,10 @@ class AnticipationUpdate(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save()
+        status = self.request.data['status']
         RequestLog.objects.create(anticipation=serializer.instance,
                                   user=self.request.user,
-                                  action=self.request.data['status'])
+                                  action=status)
+        send_email.delay_on_commit(sub=status,
+                                   recipient=[f'{serializer.instance.payment.supplier.user.email}'],
+                                   ant_id=serializer.instance.id)
