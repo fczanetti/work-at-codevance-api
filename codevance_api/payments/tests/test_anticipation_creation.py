@@ -89,7 +89,7 @@ def test_invalid_requests(auth_operator_01,
 def test_common_user_requests_not_allowed(auth_common_user, payment_supplier_01):
     """
     Certifies that users that are neither suppliers
-    nor operators can not list payments.
+    nor operators can not make requests.
     """
     new_due_date = date.today()
     data = {'payment': payment_supplier_01.pk, 'new_due_date': new_due_date}
