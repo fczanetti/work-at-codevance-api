@@ -10,12 +10,18 @@ class Supplier(models.Model):
     reg_number = models.CharField(max_length=14, verbose_name='Company Registration Number',
                                   unique=True, help_text='Only numbers')
 
+    def __str__(self):
+        return self.corporate_name
+
 
 class Payment(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     creation_date = models.DateField(auto_now_add=True)
     due_date = models.DateField(validators=[date_not_before_today])
     value = models.DecimalField(max_digits=11, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.supplier} - ${self.value}'
 
 
 class Anticipation(models.Model):
