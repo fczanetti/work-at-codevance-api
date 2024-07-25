@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from unittest import mock
 
 import pytest
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST
@@ -32,7 +33,8 @@ def test_anticipation_returned_in_response(resp_anticipation_creation_auth_opera
     """
     anticipation = Anticipation.objects.filter(payment=payment_supplier_01).first()
     serializer = AnticipationSerializer(anticipation)
-    antic_data = {'payment': serializer.data['payment'],
+    antic_data = {'id': serializer.data['id'],
+                  'payment': serializer.data['payment'],
                   'creation_date': serializer.data['creation_date'],
                   'new_due_date': serializer.data['new_due_date'],
                   'new_value': serializer.data['new_value'],
@@ -105,3 +107,18 @@ def test_log_created_after_creating_anticipation(
     """
     anticipation = Anticipation.objects.filter(payment=payment_supplier_01).first()
     assert RequestLog.objects.filter(anticipation=anticipation, action='R').exists()
+
+
+@mock.patch('codevance_api.payments.payments.send_email.delay_on_commit')
+def test_email_sent_after_creating_anticipations(mock_send_email,
+                                                 auth_operator_01,
+                                                 payment_supplier_01):
+    """
+    Certifies an email is sent when an anticipation is created.
+    """
+    new_due_date = date.today()
+    data = {'payment': payment_supplier_01.pk, 'new_due_date': new_due_date}
+    auth_operator_01.post('/api/anticipations/', data=data)
+    mock_send_email.assert_called_once_with(sub='new_ant',
+                                            recipient=[f'{payment_supplier_01.supplier.user.email}'],
+                                            ant_id=payment_supplier_01.anticipation.pk)

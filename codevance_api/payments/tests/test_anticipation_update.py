@@ -1,4 +1,5 @@
 from datetime import date
+from unittest import mock
 
 import pytest
 
@@ -112,3 +113,17 @@ def test_log_created_after_updating_an_anticipation(
     Certifies a RequestLog is created when updating an anticipation.
     """
     assert RequestLog.objects.filter(anticipation=anticipation_payment_supp_01, action='A').exists()
+
+
+@mock.patch('codevance_api.payments.payments.send_email.delay_on_commit')
+def test_email_sent_after_updating_anticipations(mock_send_email,
+                                                 auth_operator_01,
+                                                 anticipation_payment_supp_01):
+    """
+    Certifies an email is sent when an anticipation is updated.
+    """
+    data = {'status': 'A'}
+    auth_operator_01.patch(f'/api/anticipations/{anticipation_payment_supp_01.pk}/', data=data)
+    mock_send_email.assert_called_once_with(sub='A',
+                                            recipient=[f'{anticipation_payment_supp_01.payment.supplier.user.email}'],
+                                            ant_id=anticipation_payment_supp_01.pk)
