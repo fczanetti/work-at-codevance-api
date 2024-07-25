@@ -4,7 +4,7 @@ import pytest
 from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST
 from rest_framework.test import APIClient
 
-from codevance_api.payments.models import Anticipation
+from codevance_api.payments.models import Anticipation, RequestLog
 from codevance_api.payments.serializers import AnticipationSerializer
 
 
@@ -95,3 +95,13 @@ def test_common_user_requests_not_allowed(auth_common_user, payment_supplier_01)
     data = {'payment': payment_supplier_01.pk, 'new_due_date': new_due_date}
     resp = auth_common_user.post('/api/anticipations/', data=data)
     assert resp.status_code == HTTP_403_FORBIDDEN
+
+
+def test_log_created_after_creating_anticipation(
+        resp_anticipation_creation_auth_operator_01,
+        payment_supplier_01):
+    """
+    Certifies a RequestLog is created after creating an anticipation.
+    """
+    anticipation = Anticipation.objects.filter(payment=payment_supplier_01).first()
+    assert RequestLog.objects.filter(anticipation=anticipation, action='R').exists()
