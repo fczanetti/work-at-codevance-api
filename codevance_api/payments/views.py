@@ -3,11 +3,23 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
-from codevance_api.payments.models import Anticipation, RequestLog
+from codevance_api.payments.models import Anticipation, RequestLog, Payment
 from codevance_api.payments.payments import create_anticipation, create_payment, get_custom_queryset
 from codevance_api.payments.permissions import RequestPermission
 from codevance_api.payments.serializers import PaymentSerializer, AnticipationSerializer
 from codevance_api.payments.tasks import send_email
+
+
+class PaymentRetrieve(generics.RetrieveAPIView):
+    serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated, RequestPermission]
+
+    def get_queryset(self):
+        user = self.request.user
+        pk = self.kwargs['pk']
+        if user.is_operator:
+            return Payment.objects.filter(id=pk)
+        return Payment.objects.filter(id=pk).filter(supplier__user=user)
 
 
 class PaymentListCreate(generics.ListCreateAPIView):
