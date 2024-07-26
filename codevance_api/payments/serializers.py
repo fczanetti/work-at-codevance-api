@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from codevance_api.payments.models import Payment, Supplier, Anticipation
+from codevance_api.payments.models import Payment, Supplier, Anticipation, RequestLog
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -39,3 +39,9 @@ class AnticipationSerializer(serializers.ModelSerializer):
         if not Payment.objects.filter(id=value.pk).filter(supplier__user=user).exists():
             raise serializers.ValidationError("Make sure you informed a valid payment ID.")
         return value
+
+
+class RequestLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RequestLog
+        fields = ['id', 'anticipation', 'created_at', 'user', 'action']
