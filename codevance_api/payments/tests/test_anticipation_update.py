@@ -5,7 +5,8 @@ import pytest
 
 from codevance_api.payments.models import Anticipation, RequestLog
 from codevance_api.payments.payments import calc_new_value
-from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN
+from rest_framework.status import (HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_400_BAD_REQUEST,
+                                   HTTP_403_FORBIDDEN, HTTP_401_UNAUTHORIZED)
 from rest_framework.test import APIClient
 
 
@@ -81,7 +82,7 @@ def test_unauthenticated_users_can_not_update_anticip(anticipation_payment_supp_
     client = APIClient()
     data = {'status': 'A'}
     resp = client.patch(f'/api/anticipations/{anticipation_payment_supp_01.pk}/', data=data)
-    assert resp.status_code == HTTP_403_FORBIDDEN
+    assert resp.status_code == HTTP_401_UNAUTHORIZED
 
 
 def test_new_value_not_changed_if_tried(anticipation_payment_supp_01, auth_operator_01):
