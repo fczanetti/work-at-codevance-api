@@ -299,6 +299,7 @@ Here is a list of the available endpoints. Continue reading below if you need mo
 | Retrieve payments | `/api/payments/{payment_id}/` | GET | 200 |
 | Create anticipations | `/api/anticipations/` | POST | 201 |
 | Update anticipations | `/api/anticipations/{anticipation_id}/` | PATCH | 200 |
+| List RequestLogs | `/api/logs/` | GET | 200 |
 
 ## Making requests
 
