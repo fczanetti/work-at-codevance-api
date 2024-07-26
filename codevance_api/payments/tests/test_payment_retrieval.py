@@ -1,5 +1,6 @@
 import pytest
-from rest_framework.status import HTTP_200_OK, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
+from rest_framework.status import (HTTP_200_OK, HTTP_403_FORBIDDEN,
+                                   HTTP_404_NOT_FOUND, HTTP_401_UNAUTHORIZED)
 from rest_framework.test import APIClient
 
 from codevance_api.payments.serializers import PaymentSerializer
@@ -42,7 +43,7 @@ def test_unauthenticated_users_can_not_retrieve_payments(payment_supplier_01):
     """
     client = APIClient()
     resp = client.get(f'/api/payments/{payment_supplier_01.pk}/')
-    assert resp.status_code == HTTP_403_FORBIDDEN
+    assert resp.status_code == HTTP_401_UNAUTHORIZED
 
 
 def test_common_users_can_not_retrieve_payments(auth_common_user,

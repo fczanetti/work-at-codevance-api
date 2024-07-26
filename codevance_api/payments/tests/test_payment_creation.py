@@ -1,6 +1,6 @@
 import pytest
 from rest_framework.test import APIClient
-from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from codevance_api.payments.models import Payment
 from datetime import date, timedelta
 
@@ -48,7 +48,7 @@ def test_unauth_users_can_not_create_payments(supplier_01):
     due_date = date.today() + timedelta(days=10)
     data = {'supplier': supplier_01.pk, 'due_date': due_date, 'value': 1000}
     resp = unauth_client.post('/api/payments/', data=data)
-    assert resp.status_code == HTTP_403_FORBIDDEN
+    assert resp.status_code == HTTP_401_UNAUTHORIZED
 
 
 def test_bad_request_cases(auth_operator_01, auth_supplier_01, supplier_01, supplier_02):

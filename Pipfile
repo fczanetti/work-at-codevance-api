@@ -11,6 +11,7 @@ python-decouple = "*"
 dj-database-url = "*"
 psycopg2 = "*"
 celery = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 flake8 = "*"

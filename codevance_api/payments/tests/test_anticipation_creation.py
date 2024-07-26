@@ -2,7 +2,8 @@ from datetime import date, timedelta
 from unittest import mock
 
 import pytest
-from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN, HTTP_400_BAD_REQUEST
+from rest_framework.status import (HTTP_201_CREATED, HTTP_403_FORBIDDEN,
+                                   HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED)
 from rest_framework.test import APIClient
 
 from codevance_api.payments.models import Anticipation, RequestLog
@@ -51,7 +52,7 @@ def test_unauthenticated_user_can_not_create_anticipation(payment_supplier_01):
     new_due_date = date.today()
     data = {'payment': payment_supplier_01.pk, 'new_due_date': new_due_date}
     resp = client.post('/api/anticipations/', data=data)
-    assert resp.status_code == HTTP_403_FORBIDDEN
+    assert resp.status_code == HTTP_401_UNAUTHORIZED
 
 
 def test_invalid_requests(auth_operator_01,
