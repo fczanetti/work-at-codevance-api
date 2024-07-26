@@ -1,0 +1,108 @@
+[
+  {
+    "model": "base.user",
+    "pk": 1,
+    "fields": {
+      "first_name": "User 01",
+      "email": "user01@email.com",
+      "password": "pbkdf2_sha256$720000$BH3EMvLqDTSpyJ1o0B2l62$J4I2Y3uM3HAS8tlS10iaOBBqOjz3ycC6AzSdAYUMapE="
+    }
+  },
+  {
+    "model": "base.user",
+    "pk": 2,
+    "fields": {
+      "first_name": "User 02",
+      "email": "user02@email.com",
+      "password": "pbkdf2_sha256$720000$lVmHX7vIR71AT4tDMxBAup$mtx9wfXXKvac3UwbwfdcOqr3Jk5/5adNxPhYGyGE+WE="
+    }
+  },
+  {
+    "model": "base.user",
+    "pk": 3,
+    "fields": {
+      "first_name": "Operator 01",
+      "email": "operator01@email.com",
+      "password": "pbkdf2_sha256$720000$5OfWKiKuu6jWwPiSkzLljX$Zm+1X9G4W8xe4TNvtZJWd8KcPfqfwONpWdQjSn/7MRs=",
+      "is_operator": "True"
+    }
+  },
+  {
+    "model": "payments.supplier",
+    "pk": 1,
+    "fields": {
+      "user": "1",
+      "corporate_name": "Supplier 01",
+      "reg_number": "01010101010101"
+    }
+  },
+  {
+    "model": "payments.supplier",
+    "pk": 2,
+    "fields": {
+      "user": "2",
+      "corporate_name": "Supplier 02",
+      "reg_number": "02020202020202"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 1,
+    "fields": {
+      "supplier": "1",
+      "creation_date": "2024-07-26",
+      "due_date": "2024-08-25",
+      "value": "10000"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 2,
+    "fields": {
+      "supplier": "1",
+      "creation_date": "2024-07-26",
+      "due_date": "2024-08-25",
+      "value": "20000"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 3,
+    "fields": {
+      "supplier": "1",
+      "creation_date": "2024-07-26",
+      "due_date": "2024-08-25",
+      "value": "30000"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 4,
+    "fields": {
+      "supplier": "2",
+      "creation_date": "2024-07-26",
+      "due_date": "2024-08-25",
+      "value": "15000"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 5,
+    "fields": {
+      "supplier": "2",
+      "creation_date": "2024-07-26",
+      "due_date": "2024-08-25",
+      "value": "25000"
+    }
+  },
+  {
+    "model": "payments.payment",
+    "pk": 6,
+    "fields": {
+      "supplier": "2",
+      "creation_date": "2024-07-26",
+      "due_date": "2024-08-25",
+      "value": "35000"
+    }
+  }
+]
