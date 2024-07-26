@@ -19,23 +19,23 @@ If necessary, you can check the requirementes [here](https://github.com/fczanett
 
 # Content
 
-- [Database models]()
-- [Folder structure]()
-- [Permissions]()
-   - [Common user]()
-   - [Supplier]()
-   - [Operator]()
-   - [Admin / Django superuser / staff]()
-   - [Custom RequestPermission]()
-- [How to install and test]()
-- [How to install and test with Docker]()
-- [Initial data]()
-- [API documentation]()
-   - [Listing elements]()
-   - [Endpoints]()
-   - [Making requests]()
-- [New value calculation]()
-- [How to deploy]()
+- [Database models](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#database-models)
+- [Folder structure](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#folder-structure)
+- [Permissions](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#permissions)
+   - [Common user](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#common-user)
+   - [Supplier](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#supplier)
+   - [Operator](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#operator)
+   - [Admin / Django superuser / staff](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#admin--django-superuser--staff)
+   - [Custom RequestPermission](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#custom-requestpermission)
+- [How to install and test](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#how-to-install-and-test)
+- [How to install and test with Docker](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#how-to-install-and-test-with-docker)
+- [Initial data](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#initial-data)
+- [API documentation](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#api-documentation)
+   - [Listing elements](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#listing-elements)
+   - [Endpoints](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#endpoints)
+   - [Making requests](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#making-requests)
+- [New value calculation](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#new-value-calculation)
+- [How to deploy](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#how-to-deploy)
 
 # Database models
  ```mermaid
@@ -206,7 +206,7 @@ cp contrib/env-sample .env
 python manage.py migrate
 ```
 
-7 - If you wish, you can [load some initial data]() in order to make it easier for you to start making requests.
+7 - If you wish, you can [load some initial data](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#initial-data) in order to make it easier for you to start making requests.
 
 8 - Run tests to make sure everything is working fine:
 
@@ -220,7 +220,7 @@ pytest
 
 Installing this application with Docker will allow you to use Celery to send asynchronous emails when creating or updating an Anticipation. In the root of the project there's a 'docker-compose.yml' file, and this one will be responsible for creating a PostgreSQL and RabbitMQ instances for us.
 
-1 - Follow the steps 1 to 4 from [this tutorial]();
+1 - Follow the steps 1 to 4 from [this tutorial](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#how-to-install-and-test);
 
 2 - With your .env file created, start the Docker containers:
 
@@ -234,7 +234,7 @@ docker compose up -d
 python manage.py migrate
 ```
 
-4 - If you wish, [load some initial data]() to the database:
+4 - If you wish, [load some initial data](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#initial-data) to the database:
 
 ```
 python manage.py loaddata initial_data.json
@@ -338,4 +338,3 @@ $$
 # How to deploy
 
 In construction
-
