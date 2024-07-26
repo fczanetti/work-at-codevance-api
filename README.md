@@ -19,7 +19,23 @@ If necessary, you can check the requirementes [here](https://github.com/fczanett
 
 # Content
 
-In construction
+- [Database models]()
+- [Folder structure]()
+- [Permissions]()
+   - [Common user]()
+   - [Supplier]()
+   - [Operator]()
+   - [Admin / Django superuser / staff]()
+   - [Custom RequestPermission]()
+- [How to install and test]()
+- [How to install and test with Docker]()
+- [Initial data]()
+- [API documentation]()
+   - [Listing elements]()
+   - [Endpoints]()
+   - [Making requests]()
+- [New value calculation]()
+- [How to deploy]()
 
 # Database models
  ```mermaid
@@ -38,6 +54,7 @@ In construction
     - first_name ~str~
     - email ~str~, ~unique~
     - password ~str~
+    - is_operator ~bool~
  }
 
  class Supplier {
@@ -102,6 +119,8 @@ Main folders and files:
 |   |   |   ├── 📂 migrations
 |   |   |   ├── 📂 templates
 |   |   |   ├── 📂 tests
+|   |   |   ├── 📂 fixtures
+|   |   |   |   ├── initial_data.json
 |   |   |   ├── admin.py
 |   |   |   ├── models.py
 |   |   |   ├── views.py
@@ -113,3 +132,210 @@ Main folders and files:
 |   |   |   ├── validators.py
 
 ```
+
+# Permissions
+
+There different kinds of users that can authenticate on this application, and here we are describing some details about their implementation:
+
+### Common User
+
+This is the base User, and it has no permissions at all. In order to create a Supplier, this common User instance needs to be created first, and then it has to be informed in the 'user' field of the new Supplier instance.
+
+### Supplier
+
+The Supplier, once created, has the following permissions:
+
+- can create payments for himself;
+- can create anticipations for his own payments;
+- can list his own payments;
+- can retrieve his payments using the payment ID.
+
+### Operator
+
+The Operator instance is one that has all permissions. It can:
+
+- create payments for any suppliers;
+- create anticipations for payments that belong to any Supplier;
+- list payments from all Supplier;
+- retrieve payments from any Supplier;
+- approve or deny anticipations from payments that belong to any Supplier.
+
+The procedure to create an Operator is almost the same as to create a Common User, we just need to mark the 'is_operator' option when creating via Admin page, or inform ```is_operator=True``` if creating via command line. 
+
+### Admin / Django superuser / staff
+
+This is the Django User that can access the Admin page. In this implementation, the Admin User can not make requests. In order to use this instance to make requests, you have to edit it by setting its 'is_operator' field to True.
+
+### Custom RequestPermission
+
+There is a custom permission implemented named RequestPermission, and this is the one that only allow requests from Supplier or Operator instances. It's located in the 'permissions.py' module inside 'payments' directory. Changing this implementation may cause problems in the application.
+
+# How to install and test
+
+The following instructions assume you are using pipenv as your virtual management tool, and also a Linux working environment.
+
+1 - Clone this repository:
+
+```
+git clone git@github.com:fczanetti/work-at-codevance-api.git
+```
+
+2 - Install the required libraries. This command also creates a virtual environment:
+
+```
+pipenv sync -d
+```
+
+3 - Activate the virtual environment:
+
+```
+pipenv shell
+```
+
+4 - Copy the content from 'env-sample' file located inside 'contrib' directory to a new file called .env:
+
+```
+cp contrib/env-sample .env
+```
+
+5 - In the new .env file you have a variable called DATABASE_URL, and this is to be used with Docker. Comment it, so Django can connect with an sqlite3 database that it automatically creates for you.
+
+6 - Apply the database migrations. The database file (db.sqlite3) will be created when you run this command:
+
+```
+python manage.py migrate
+```
+
+7 - If you wish, you can [load some initial data]() in order to make it easier for you to start making requests.
+
+8 - Run tests to make sure everything is working fine:
+
+```
+pytest
+```
+
+9 - You can now start Django server and test some requests.
+
+# How to install and test with Docker
+
+Installing this application with Docker will allow you to use Celery to send asynchronous emails when creating or updating an Anticipation. In the root of the project there's a 'docker-compose.yml' file, and this one will be responsible for creating a PostgreSQL and RabbitMQ instances for us.
+
+1 - Follow the steps 1 to 4 from [this tutorial]();
+
+2 - With your .env file created, start the Docker containers:
+
+```
+docker compose up -d
+```
+
+3 - Apply the database migrations:
+
+```
+python manage.py migrate
+```
+
+4 - If you wish, [load some initial data]() to the database:
+
+```
+python manage.py loaddata initial_data.json
+```
+
+5 - Run tests to make sure everything is working fine:
+
+```
+pytest
+```
+
+6 - Start celery worker to be able to send emails: 
+
+```
+celery -A codevance_api worker -l INFO
+```
+
+It's important to note that you won't send real emails by only doing this, the emails will only be printed in your command line, the same place where you started celery worker. This happens because of the EMAIL_BACKEND we have configured in our .env, that is a Django setting to be used during development. 
+
+To send real emails, all the email settings listed on your .env file have to be properly configured.
+
+7 - Start Django server and test some requests:
+
+```
+python manage.py runserver
+```
+
+# Initial data
+
+In order to make it easier to test after installing, there are some initial data that can be loaded to the database using the following command:
+
+```
+python manage.py loaddata initial_data.json
+```
+
+By doing this, you'll create these instances (fake emails):
+
+- User 01 - email: user01@email.com / password: user01
+- User 02 - email: user02@email.com / password: user02
+- Supplier 01 - user: User 01
+- Supplier 02 - user: User 02
+- Operator 01: email: operator01@email.com / password: operator01
+- 3 different payments related to Supplier 01
+- 3 different payments related to Supplier 02
+
+# API documentation
+
+## Listing elements
+
+When listing elements via endpoints, payments for example, the max number of items returned will be 10 per page. If you need a different number, feel free to change it in settings.py. There is a setting in this module called REST_FRAMEWORK, and it is a dictionary with one of its keys named PAGE_SIZE. This is the value you have to change.
+
+## Endpoints
+
+Here is a list of the available endpoints. Continue reading below if you need more details.
+
+| Action | Endpoint | Method | Status Code |
+| --- | --- | :---: | :---: |
+| Generate token (JWT) | `/api/token/` | POST | 200 |
+| Refresh token (JWT) | `api/token/refresh/` | POST | 200 |
+| List payments | `/api/payments/` | GET | 200 |
+| Create payments | `/api/payments/` | POST | 201 |
+| Retrieve payments | `/api/payments/{payment_id}/` | GET | 200 |
+| Create anticipations | `/api/anticipations/` | POST | 201 |
+| Update anticipations | `/api/anticipations/{anticipation_id}/` | PATCH | 200 |
+
+## Making requests
+
+In construction
+
+# New value calculation
+
+When an Anticipation is created the number of days between the original due date and the new due date is used to calculate the amount of discount. Also, a fixed interest rate of 3% / month is used. Here is an example:
+
+Formula:
+
+- nv = new value
+- ov = original value
+- da = days in advance
+- 0.03 = fixed interest rate
+
+$$
+nv = ov - (ov*\frac{(0.03)}{30} * da)
+$$
+
+- original due date: 2024-10-01
+- new due date: 2024-09-15
+- original value: 1000.00
+
+$$
+nv = 1000 - (1000*\frac{(0.03)}{30} * 16)
+$$
+
+$$
+nv = 1000 - (16)
+$$
+
+$$
+nv = 984.00
+$$
+
+# How to deploy
+
+In construction
+
