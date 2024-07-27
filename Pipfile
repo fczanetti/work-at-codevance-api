@@ -12,6 +12,7 @@ dj-database-url = "*"
 psycopg2 = "*"
 celery = "*"
 djangorestframework-simplejwt = "*"
+gunicorn = "*"
 
 [dev-packages]
 flake8 = "*"
