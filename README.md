@@ -295,11 +295,19 @@ Here is a list of the available endpoints. Continue reading below if you need mo
 | Generate token (JWT) | `/api/token/` | POST | 200 |
 | Refresh token (JWT) | `api/token/refresh/` | POST | 200 |
 | List payments | `/api/payments/` | GET | 200 |
+| Filter payments* | `/api/payments/?status={status}` | GET | 200 |
 | Create payments | `/api/payments/` | POST | 201 |
 | Retrieve payments | `/api/payments/{payment_id}/` | GET | 200 |
 | Create anticipations | `/api/anticipations/` | POST | 201 |
 | Update anticipations | `/api/anticipations/{anticipation_id}/` | PATCH | 200 |
 | List RequestLogs | `/api/logs/` | GET | 200 |
+
+*The available status for filtering a payment are:
+- A - Available to anticipate;
+- U - Unavailable to anticipate;
+- PC - Pending confirmation anticipation;
+- AN - Anticipated (anticipation created and approved);
+- D - Denied anticipation. 
 
 ## Making requests
 
