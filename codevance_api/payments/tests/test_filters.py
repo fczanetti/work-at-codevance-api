@@ -5,6 +5,7 @@ import pytest
 from codevance_api.payments.models import Payment, Anticipation
 from codevance_api.payments.payments import calc_new_value
 from codevance_api.payments.serializers import PaymentSerializer
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
 
 @pytest.fixture
@@ -177,3 +178,26 @@ def test_no_filter_payments(auth_operator_01, payments_filter):
     assert PaymentSerializer(payments_filter['PC']).data in resp.data['results']
     assert PaymentSerializer(payments_filter['AN']).data in resp.data['results']
     assert PaymentSerializer(payments_filter['D']).data in resp.data['results']
+
+
+def test_filter_when_non_capital_letters_are_used(auth_operator_01, payments_filter):
+    """
+    Certify that when non-capital letters are used the filter also works.
+    """
+    resp = auth_operator_01.get('/api/payments/', {'status': 'a'})
+    assert PaymentSerializer(payments_filter['A']).data in resp.data['results']
+    assert PaymentSerializer(payments_filter['U']).data not in resp.data['results']
+    assert PaymentSerializer(payments_filter['PC']).data not in resp.data['results']
+    assert PaymentSerializer(payments_filter['AN']).data not in resp.data['results']
+    assert PaymentSerializer(payments_filter['D']).data not in resp.data['results']
+
+
+def test_error_message_when_informed_invalid_filter_status(auth_operator_01):
+    """
+    Certifies that the user is informed about the correct filtering
+    parameters when a wrong one is used.
+    """
+    invalid_status = 'I'
+    resp = auth_operator_01.get('/api/payments/', {'status': invalid_status})
+    assert resp.status_code == HTTP_400_BAD_REQUEST
+    assert resp.json()[0] == f'"{invalid_status}" is an invalid status. Choose A, U, PC, AN or D.'

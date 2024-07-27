@@ -4,6 +4,7 @@ from datetime import date
 from codevance_api.payments.models import Payment, RequestLog
 from codevance_api.payments.serializers import AnticipationSerializer, PaymentSerializer
 from codevance_api.payments.tasks import send_email
+from rest_framework.serializers import ValidationError
 
 
 def calc_new_value(payment_id, new_date):
@@ -69,6 +70,7 @@ def get_custom_queryset(user, status):
     - status = 'ALL': all payments are shown, filtered by supplier unless an
     operator is requesting. In this case, no filters are applied.
     """
+    status = status.upper()
     today = date.today()
     queryset = {
         'A': Payment.objects.select_related('supplier').filter(due_date__gt=today, anticipation=None),
@@ -88,6 +90,9 @@ def get_custom_queryset(user, status):
         .filter(anticipation__status='D'),
         'ALL': Payment.objects.select_related('supplier')
     }
+    if status not in queryset:
+        raise ValidationError(f'"{status}" is an invalid status. Choose A, U, PC, AN or D.')
+
     if user.is_operator:
         return queryset[status].order_by('-creation_date')
     supplier = user.supplier
