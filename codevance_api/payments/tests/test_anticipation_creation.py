@@ -123,3 +123,17 @@ def test_email_sent_after_creating_anticipations(mock_send_email,
     mock_send_email.assert_called_once_with(sub='new_ant',
                                             recipient=[f'{payment_supplier_01.supplier.user.email}'],
                                             ant_id=payment_supplier_01.anticipation.pk)
+
+
+def test_error_message_if_tried_to_create_to_anticip_same_payment(auth_operator_01,
+                                                                  payment_supplier_01):
+    """
+    Certifies that the user is informed if a payment already has an anticipation
+    when tried to create another for same payment.
+    """
+    new_due_date = date.today()
+    data = {'payment': payment_supplier_01.pk, 'new_due_date': new_due_date}
+    auth_operator_01.post('/api/anticipations/', data=data)
+    resp_02 = auth_operator_01.post('/api/anticipations/', data=data)  # second request for same payment
+    assert resp_02.status_code == HTTP_400_BAD_REQUEST
+    assert resp_02.json()[0] == 'An anticipation was already created for this payment.'

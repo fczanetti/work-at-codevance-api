@@ -35,6 +35,9 @@ class Anticipation(models.Model):
     update_date = models.DateField(auto_now=True)
     status = models.CharField(choices=STATUS_CHOICES, default='PC', max_length=25)
 
+    def __str__(self):
+        return self.payment
+
 
 class RequestLog(models.Model):
     ACTION_CHOICES = {'A': 'Approval', 'D': 'Denial', 'R': 'Request'}

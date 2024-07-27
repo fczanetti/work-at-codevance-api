@@ -28,6 +28,11 @@ def create_anticipation(request):
     serializer = AnticipationSerializer(data=data, context={'request': request})
     if serializer.is_valid(raise_exception=True):
         payment_id = serializer.validated_data['payment'].pk
+
+        # Check if payment already has an anticipation related
+        if hasattr(Payment.objects.filter(id=payment_id).first(), 'anticipation'):
+            raise ValidationError('An anticipation was already created for this payment.')
+
         new_due_date = serializer.validated_data['new_due_date']
         new_value = calc_new_value(payment_id, new_due_date.isoformat())
         serializer.save(new_value=new_value)
