@@ -667,7 +667,7 @@ These are the required ones:
 - EMAIL_HOST=
 - EMAIL_HOST_PASSWORD=
 - DEFAULT_FROM_EMAIL=
-   - see the [integration with SendGrid](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#sendgrid) to have the values for EMAIL_HOST, EMAIL_HOST_PASSWORD and DEFAULT_FROM_EMAIL
+   - see the [integration with SendGrid](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#sendgrid) to have the values for EMAIL_HOST_USER, EMAIL_HOST, EMAIL_HOST_PASSWORD and DEFAULT_FROM_EMAIL
 
 - AWS_ACCESS_KEY_ID=
 - AWS_SECRET_ACCESS_KEY=
