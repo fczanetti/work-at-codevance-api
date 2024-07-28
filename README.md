@@ -289,30 +289,254 @@ When listing elements via endpoints, payments for example, the max number of ite
 
 ## Endpoints
 
-Here is a list of the available endpoints. Continue reading below if you need more details.
+Here is a list of the available endpoints. Continue reading or use the 'More details' links if you need more explanations.
 
-| Action | Endpoint | Method | Status Code |
-| --- | --- | :---: | :---: |
-| Generate token (JWT) | `/api/token/` | POST | 200 |
-| Refresh token (JWT) | `api/token/refresh/` | POST | 200 |
-| List payments | `/api/payments/` | GET | 200 |
-| Filter payments* | `/api/payments/?status={status}` | GET | 200 |
-| Create payments | `/api/payments/` | POST | 201 |
-| Retrieve payments | `/api/payments/{payment_id}/` | GET | 200 |
-| Create anticipations | `/api/anticipations/` | POST | 201 |
-| Update anticipations | `/api/anticipations/{anticipation_id}/` | PATCH | 200 |
-| List RequestLogs | `/api/logs/` | GET | 200 |
-
-*The available status for filtering a payment are:
-- A - Available to anticipate;
-- U - Unavailable to anticipate;
-- PC - Pending confirmation anticipation;
-- AN - Anticipated (anticipation created and approved);
-- D - Denied anticipation. 
+| Action | Endpoint | Method | Status Code | Guide |
+| --- | --- | :---: | :---: | :---: |
+| Generate token (JWT) | `/api/token/` | POST | 200 | [More details]() |
+| Refresh token (JWT) | `api/token/refresh/` | POST | 200 | [More details]() |
+| List payments | `/api/payments/` | GET | 200 | [More details]() |
+| Filter payments | `/api/payments/?status={status}` | GET | 200 | [More details]() |
+| Create payments | `/api/payments/` | POST | 201 | [More details]() |
+| Retrieve payments | `/api/payments/{payment_id}/` | GET | 200 | [More details]() |
+| Create anticipations | `/api/anticipations/` | POST | 201 | [More details]() |
+| Update anticipations | `/api/anticipations/{anticipation_id}/` | PATCH | 200 | [More details]() |
+| List RequestLogs | `/api/logs/` | GET | 200 | [More details]() |
 
 ## Making requests
 
-In construction
+### Generating a new JWT token
+
+A JWT (Json Web Token) authentication was implemented in this API. Basically, you have to generate a token and include it in all requests in order to authenticate.
+
+To create a new token the email and password are necessary, and a POST request has to be made to ```/api/token/``` as follows:
+
+```
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"email": "<USER_EMAIL>", "password": "<USER_PASSWORD>"}' \
+  http://127.0.0.1:8000/api/token/
+```
+
+If successfull, you will receive a 200 status code response with the following content:
+
+```
+{
+  "refresh": "<REFRESH_TOKEN>",
+  "access": "<ACCESS_TOKEN>"
+}
+```
+
+Once you have your access token, you can start making authenticated requests to protected views. Here is an example of a GET request:
+
+```
+curl \
+  -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  http://127.0.0.1:8000/api/payments/
+```
+
+### Refreshing the JWT token
+
+When creating an access token as shown in the previous tutorial, we receive two different tokens, the access and the refresh ones. The access is used to authenticate requests, but it has a short expiration time. Once it expires, we have to use our refresh token to get a new one.
+
+To have a new access token, make a POST request to ```/api/token/refresh/``` as shown in this example:
+
+```
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"refresh":"<REFRESH_TOKEN>"}' \
+  http://127.0.0.1:8000/api/token/refresh/
+```
+
+If successfull, you will receive a 200 status code response with the following content:
+
+```
+{
+  "access": "<NEW_ACCESS_TOKEN>"
+}
+```
+
+### Listing payments
+
+To list payments, send a GET request to ```/api/payments/```. If successfull, you will receive a 200 status code response in the following format:
+
+```
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2,
+      "supplier": 1,
+      "creation_date": "2024-07-26",
+      "due_date": "2024-08-25",
+      "value": "20000.00"
+    },
+    {
+      "id": 3,
+      "supplier": 1,
+      "creation_date": "2024-07-26",
+      "due_date": "2024-08-25",
+      "value": "30000.00"
+    }
+  ]
+}
+```
+
+If you are filtering payments using an Operator account, you will be able to see payments related to all suppliers. But, if you list payments using a Supplier account, you'll only see payments related to this specific Supplier.
+
+### Filtering payments
+
+You can also filter payments when listing. To do so, you have to inform the payment status as a URL query parameter. This is the format: ```/api/payments/?status={status}```.
+
+You can see [here](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#database-models) that 'status' is not a field created for Payment model, it is just a parameter used to choose which payments to return. Here you have a more detailed explanation on how the filtering status work:
+
+- **A**: this status is used to retrieve the payments that are available to anticipate. It means that these payments have no anticipations related/created to them, and their due_date was not reached yet;
+
+- **U**: this is the status used to return all payments that are no longer available to anticipate (unavailable), what means that their due_date was already reached (less than or equal today). These payments can have an anticipation related, but the anticipation status can not be "A" (anticipated) or "D" (denied), it has to be "PC" (pending confirmation). This is to simulate occasions when an Anticipation is created but not approved or denied, and as time goes by the payment becomes unavailable because its due_date is reached;
+
+- **PC**: if chosen, this status will return payments that has anticipations related, and the status of these anticipations are "PC" (pending confirmation). Also, the Payment due_date can not have been reached, otherwise it would be shown when filtering the unavailable for anticipation ones;
+
+- **AN**: this is the status used to return payments that have anticipations related, and these anticipations must have a "A" (anticipated) status;
+
+- **D**: finally, you can also filter payments that has anticipations related, but these anticipations were not approved, but denied (status="D").
+
+The format of the response will be the same as when [listing payments]().
+
+### Creating payments
+
+In order to create new payments, send a POST request to ```/api/payments/```. It will be necessary to inform a Supplier ID (int), a due date (ISO 8601 format) and a value (decimal). This is the format:
+
+```
+{
+   "supplier": 1,
+   "due_date": "2024-08-20",
+   "value": 1000
+}
+```
+
+If successfull, the response will have a 201 status code and the Payment created will return as follows:
+
+```
+{
+  "id": 8,
+  "supplier": 1,
+  "creation_date": "2024-07-28",
+  "due_date": "2024-08-20",
+  "value": "1000.00"
+}
+```
+
+Using an Operator account you can create payments to any Supplier, but using a Supplier account you can only create payments for this Supplier.
+
+### Retrieving payments
+
+To retrieve a Payment, send a GET request to ```/api/payments/{payment_id}/``` informing the Payment ID (int). If successfull, the response will have a 200 status code and will look like this:
+
+```
+{
+  "id": 8,
+  "supplier": 1,
+  "creation_date": "2024-07-28",
+  "due_date": "2024-08-20",
+  "value": "1000.00"
+}
+```
+
+Suppliers can only retrieve their own payments, but operators can retrieve payments from any Supplier.
+
+### Creating anticipations
+
+To create an Anticipation you'll have to send a POST request to ```/api/anticipations/``` informing a Payment ID (int) and a new due date (ISO 8601 format):
+
+```
+{
+   "payment": 8,
+   "new_due_date": "2024-08-10"
+}
+```
+
+If successfull, a 201 status code response will return in the following format:
+
+```
+{
+  "id": 11,
+  "payment": 8,
+  "creation_date": "2024-07-28",
+  "new_due_date": "2024-08-10",
+  "new_value": "990.00",
+  "update_date": "2024-07-28",
+  "status": "PC"
+}
+```
+
+An Operator can create anticipations for payments that belong to any Supplier, but a Supplier can only create anticipations for his own payments. Only one Anticipation is allowed for a Payment.
+
+### Updating anticipations
+
+Anticipations, when created, have a default "PC" (pending confirmation) status. To approve or deny an Anticipation you have to update it to a status equal to "A" or "D" (approved or denied). These are the only allowed status to use when updating. 
+
+To do so, send a PATCH request (partial update) to ```/api/anticipations/{anticipation_id}/``` informing the Anticipation ID in the URL. This request also needs a body in the following format:
+
+```
+{
+   "status": "A"
+}
+```
+
+If successfull, you'll receive a 200 status code response that looks like this:
+
+```
+{
+  "id": 11,
+  "payment": 8,
+  "creation_date": "2024-07-28",
+  "new_due_date": "2024-08-10",
+  "new_value": "990.00",
+  "update_date": "2024-07-28",
+  "status": "A"
+}
+```
+
+Anticipations can only be updated by operators.
+
+### Listing requestlogs
+
+Every time an Anticipation in created or updated a RequestLog is also created. To list them, send a GET request to ```/api/logs/```. If successfull, you will receive a 200 status code response in the following format:
+
+```
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 11,
+      "anticipation": 11,
+      "created_at": "2024-07-28",
+      "user": 3,
+      "action": "R"
+    },
+    {
+      "id": 12,
+      "anticipation": 11,
+      "created_at": "2024-07-28",
+      "user": 3,
+      "action": "A"
+    }
+  ]
+}
+```
+
+Some considerations about this representation:
+
+- user: this field shows the ID of the user that created or updated the Anticipation;
+- action: this is the action that was taken, where "R" means "Requested", "A" means "Approved" and "D" means "Denied.
+
+An Operator can list requestlogs from anticipations that belong to all suppliers, but a Supplier can only list the requestlogs that belongs to its own anticipations.
 
 # New value calculation
 

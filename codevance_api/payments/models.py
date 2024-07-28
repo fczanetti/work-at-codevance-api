@@ -36,7 +36,7 @@ class Anticipation(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, default='PC', max_length=25)
 
     def __str__(self):
-        return self.payment
+        return f'{self.payment}'
 
 
 class RequestLog(models.Model):
