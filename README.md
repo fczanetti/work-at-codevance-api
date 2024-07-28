@@ -112,6 +112,7 @@ Main folders and files:
 |   |   ├── celery.py
 |   |   ├── 📂 base
 |   |   |   ├── 📂 migrations
+|   |   |   ├── 📂 tests
 |   |   |   ├── admin.py
 |   |   |   ├── models.py
 |   |   |   ├── views.py
