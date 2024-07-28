@@ -44,9 +44,9 @@ If necessary, you can check the requirementes [here](https://github.com/fczanett
 - [New value calculation](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#new-value-calculation)
 - [How to deploy](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#how-to-deploy)
 - [Integrations](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#integrations)
-   - [AWS]()
-   - [SendGrid]()
-   - [CloudAMQP]()
+   - [AWS](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#aws)
+   - [SendGrid](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#sendgrid)
+   - [CloudAMQP](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#cloudamqp)
 
 # Database models
  ```mermaid
@@ -657,7 +657,7 @@ These are the required ones:
 - ALLOWED_HOSTS=
    - the value for this variable is the domain of your app. If you didn't configure a specific domain you have to use the one created by Heroku. You can find it in the settings page of you application, in the Domains section. For example: 'codevanceapi-25a5ebc88ad9.herokuapp.com'
 - CELERY_BROKER_URL=
-   - see the [integration with CloudAMQP]() to get this value
+   - see the [integration with CloudAMQP](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#cloudamqp) to get this value
 - CELERY_WORKER_CANCEL_LONG_RUNNING_TASKS_ON_CONNECTION_LOSS=True
 
 - EMAIL_USE_TLS=True
@@ -667,12 +667,12 @@ These are the required ones:
 - EMAIL_HOST=
 - EMAIL_HOST_PASSWORD=
 - DEFAULT_FROM_EMAIL=
-   - see the [integration with SendGrid]() to have the values for EMAIL_HOST, EMAIL_HOST_PASSWORD and DEFAULT_FROM_EMAIL
+   - see the [integration with SendGrid](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#sendgrid) to have the values for EMAIL_HOST, EMAIL_HOST_PASSWORD and DEFAULT_FROM_EMAIL
 
 - AWS_ACCESS_KEY_ID=
 - AWS_SECRET_ACCESS_KEY=
 - AWS_STORAGE_BUCKET_NAME=
-   - see [integration with AWS]() to have the values for AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME
+   - see [integration with AWS](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#aws) to have the values for AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME
 
 ### 6 - Deploy the application
 
