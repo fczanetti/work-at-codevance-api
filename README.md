@@ -34,8 +34,18 @@ If necessary, you can check the requirementes [here](https://github.com/fczanett
    - [Listing elements](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#listing-elements)
    - [Endpoints](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#endpoints)
    - [Making requests](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#making-requests)
+      - [Generate token (JWT)](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#generating-a-new-jwt-token)
+      - [Refresh token (JWT)](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#refreshing-the-jwt-token)
+      - [List payments](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#listing-payments)
+      - [Filter payments](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#filtering-payments)
+      - [Create payments](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#creating-payments)
+      - [Retrieve payments](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#retrieving-payments)
+      - [Create anticipations](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#creating-anticipations)
+      - [Update anticipations](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#updating-anticipations)
+      - [List requestLogs](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#listing-requestlogs)
 - [New value calculation](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#new-value-calculation)
 - [How to deploy](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#how-to-deploy)
+- [Integrations](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#integrations)
 
 # Database models
  ```mermaid
@@ -293,17 +303,19 @@ Here is a list of the available endpoints. Continue reading or use the 'More det
 
 | Action | Endpoint | Method | Status Code | Guide |
 | --- | --- | :---: | :---: | :---: |
-| Generate token (JWT) | `/api/token/` | POST | 200 | [More details]() |
-| Refresh token (JWT) | `api/token/refresh/` | POST | 200 | [More details]() |
-| List payments | `/api/payments/` | GET | 200 | [More details]() |
-| Filter payments | `/api/payments/?status={status}` | GET | 200 | [More details]() |
-| Create payments | `/api/payments/` | POST | 201 | [More details]() |
-| Retrieve payments | `/api/payments/{payment_id}/` | GET | 200 | [More details]() |
-| Create anticipations | `/api/anticipations/` | POST | 201 | [More details]() |
-| Update anticipations | `/api/anticipations/{anticipation_id}/` | PATCH | 200 | [More details]() |
-| List RequestLogs | `/api/logs/` | GET | 200 | [More details]() |
+| Generate token (JWT) | `/api/token/` | POST | 200 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#generating-a-new-jwt-token) |
+| Refresh token (JWT) | `api/token/refresh/` | POST | 200 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#refreshing-the-jwt-token) |
+| List payments | `/api/payments/` | GET | 200 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#listing-payments) |
+| Filter payments | `/api/payments/?status={status}` | GET | 200 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#filtering-payments) |
+| Create payments | `/api/payments/` | POST | 201 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#creating-payments) |
+| Retrieve payments | `/api/payments/{payment_id}/` | GET | 200 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#retrieving-payments) |
+| Create anticipations | `/api/anticipations/` | POST | 201 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#creating-anticipations) |
+| Update anticipations | `/api/anticipations/{anticipation_id}/` | PATCH | 200 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#updating-anticipations) |
+| List RequestLogs | `/api/logs/` | GET | 200 | [More details](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#listing-requestlogs) |
 
 ## Making requests
+
+All requests have to be authenticated to work, and the authentication is made via Json Web Token (JWT). Keep reading to see how to genereta a token and how to send authenticated requests.
 
 ### Generating a new JWT token
 
@@ -404,7 +416,7 @@ You can see [here](https://github.com/fczanetti/work-at-codevance-api?tab=readme
 
 - **D**: finally, you can also filter payments that has anticipations related, but these anticipations were not approved, but denied (status="D").
 
-The format of the response will be the same as when [listing payments]().
+The format of the response will be the same as when [listing payments](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#listing-payments).
 
 ### Creating payments
 
@@ -570,5 +582,9 @@ nv = 984.00
 $$
 
 # How to deploy
+
+In construction
+
+# Integrations
 
 In construction
