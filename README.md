@@ -15,8 +15,6 @@ Imagine that a company has a lot of suppliers, and it has to regularly pay them 
 
 If necessary, you can check the requirementes [here](https://github.com/fczanetti/work-at-codevance-api/blob/main/project_instructions.md).
 
-**This project is in construction, and more details will be added soon.**
-
 # Content
 
 - [Database models](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#database-models)
@@ -46,6 +44,9 @@ If necessary, you can check the requirementes [here](https://github.com/fczanett
 - [New value calculation](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#new-value-calculation)
 - [How to deploy](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#how-to-deploy)
 - [Integrations](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#integrations)
+   - [AWS]()
+   - [SendGrid]()
+   - [CloudAMQP]()
 
 # Database models
  ```mermaid
@@ -583,8 +584,157 @@ $$
 
 # How to deploy
 
-In construction
+Here we have a procedure of how to deploy this application on [Heroku](https://www.heroku.com/home). We are going through a step by step that will be enough for this deployment, but if you need a more detailed explanation about each step taken you can [visit this link](https://devcenter.heroku.com/articles/getting-started-with-python).
+
+### Requirements:
+
+- A [verified account](https://signup.heroku.com/login) on Heroku;
+- An [Eco dynos plan](https://devcenter.heroku.com/articles/eco-dyno-hours) subscription (the most basic one);
+- Install the [Heroku Command Line Interface](https://devcenter.heroku.com/articles/heroku-cli) (CLI);
+- An [AWS](https://aws.amazon.com/) account;
+- A [SendGrid](https://sendgrid.com/en-us) account;
+- A [CloudAMQP](https://www.cloudamqp.com/) account;
+
+Having the first requirements attended, we can start following the next steps.
+
+### 1 - Login to Heroku
+
+Inside your project diretory and using your command line run the following command:
+
+```
+heroku login
+```
+
+### 2 - Create a Procfile
+
+After authenticated, create a file in the root directory of the project named [Procfile](https://devcenter.heroku.com/articles/procfile). In this file, insert this content that will be responsible for starting our application server on Heroku, running the migrations to our new database and starting our Celery worker:
+
+```
+web: gunicorn codevance_api.wsgi
+release: ./manage.py migrate --no-input
+worker: python -m celery -A codevance_api worker -l info
+```
+
+OBS: this file is already created in our root directory.
+
+### 3 - Create the application on Heroku
+
+Having a Procfile set, we can create our application on Heroku using this command:
+
+```
+heroku apps:create <APP_NAME>
+```
+
+You can choose an APP_NAME that best suits you.
+
+### 4 - Provision a database
+
+With our new application created, we can [provision a database](https://devcenter.heroku.com/articles/provisioning-heroku-postgres) to it. The database we are going to use is PostgreSQL, and Heroku offers an add-on that we can take advantage of. The next command is enough for creating a database linked to our application, and a DATABASE_URL environment variable will be automatically created for us in the platform.
+
+```
+heroku addons:create heroku-postgresql:<PLAN_NAME>
+```
+
+The <PLAN_NAME> is the PostgreSQL plan we are choosing. The [essential-0](https://devcenter.heroku.com/articles/heroku-postgres-plans#essential-tier) is the most basic one in these days, and that is enough for us. This is the final command we can use to create the database:
+
+```
+heroku addons:create heroku-postgresql:essential-0
+```
+
+### 5 - Set the environment variables
+
+We can use the next command to set the environment variables for our new application on Heroku, or we can also access the application page, go to settings and set it there in the 'Config Vars' section.
+
+```
+heroku config:set <VARIABLE>=<VALUE>
+```
+
+These are the required ones:
+
+- DEBUG=False
+- SECRET_KEY=
+   - for the SECRET_KEY variable you can use a Django function to create a random one. This function is called 'get_random_secret_key()', and you can import it from 'django.core.management.utils'
+- ALLOWED_HOSTS=
+   - the value for this variable is the domain of your app. If you didn't configure a specific domain you have to use the one created by Heroku. You can find it in the settings page of you application, in the Domains section. For example: 'codevanceapi-25a5ebc88ad9.herokuapp.com'
+- CELERY_BROKER_URL=
+   - see the [integration with CloudAMQP]() to get this value
+- CELERY_WORKER_CANCEL_LONG_RUNNING_TASKS_ON_CONNECTION_LOSS=True
+
+- EMAIL_USE_TLS=True
+- EMAIL_PORT=587
+- EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+- EMAIL_HOST_USER=
+- EMAIL_HOST=
+- EMAIL_HOST_PASSWORD=
+- DEFAULT_FROM_EMAIL=
+   - see the [integration with SendGrid]() to have the values for EMAIL_HOST, EMAIL_HOST_PASSWORD and DEFAULT_FROM_EMAIL
+
+- AWS_ACCESS_KEY_ID=
+- AWS_SECRET_ACCESS_KEY=
+- AWS_STORAGE_BUCKET_NAME=
+   - see [integration with AWS]() to have the values for AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME
+
+### 6 - Deploy the application
+
+With all the required environment variables set we can deploy the application.
+
+```
+git push heroku main
+```
+
+If you are not working on the main branch you can use this command:
+
+```
+git push heroku <BRANCHNAME>:main
+```
+
+### 7 - Start Celery worker on Heroku
+
+Use this command to start the Celery worker that was defined in our Procfile:
+
+```
+heroku ps:scale worker=1
+```
+
+### 8 - Create a Django superuser
+
+If everything worked fine so far our application is already running. We can create a Django superuser to be able to access the Admin page, create some users and start testing.
+
+```
+heroku run bash
+```
+
+This command allows you to access the machine where your application is placed, and then you can use the next command to create de superuser:
+
+```
+python manage.py superuser
+```
+
+### 9 - Connect with GitHub for continuous delivery
+
+Check [this tutorial](https://devcenter.heroku.com/articles/github-integration) to see how you can deploy the application automatically every time you push new changes to the branch you choose (usually the 'main' branch).
 
 # Integrations
 
-In construction
+### AWS
+
+This application was integrated with AWS S3 in order to have the static files served in production environment. Follow these steps to have the values of the AWS environment variables that we have to configure on our app in Heroku.
+
+- create en IAM user on AWS platform and attach to it a policy called AmazonS3FullAccess;
+- create an access key for this user. This key has an ID (AWS_ACCESS_KEY_ID) and a value (AWS_SECRET_ACCESS_KEY), both will be used;
+- create a bucket for the static files. On this bucket, attach a policy that allows the IAM user created to 'PutObject' in all its folders. You will have to choose a name for this bucket, and this is the value we use in our AWS_STORAGE_BUCKET_NAME environment variable.
+
+### SendGrid
+
+This integration was made in order to have an email server to deliver emails for us. Follow the next instructions to have all we need to configure our email environment variables.
+
+- in 'Marketing' section, create a new 'Sender' to be used to send emails. You'll have to verify the email used to create the Sender;
+- in 'Email API' section, click on the 'Integration Guide' link and choose the option 'SMTP Relay';
+- create an API key filling a name, and then save the values shown: Server, Username and Password. These will be used to set the environment variables EMAIL_HOST, EMAIL_HOST_USER and EMAIL_HOST_PASSWORD respectively. The DEFAULT_FROM_EMAIL variable is the email used when creating the 'Sender'.
+
+### CloudAMQP
+
+In order to have a RabbitMQ service running, required to send emails, a suggestion is CloudAMQP platform. On their website, follow these steps:
+
+- create a RabbitMQ free instance and access its main page;
+- in 'AMQP details', copy and save the URL shown to be used as our CELERY_BROKER_URL environment variable.
