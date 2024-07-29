@@ -8,6 +8,7 @@ from codevance_api.payments.payments import create_anticipation, create_payment,
 from codevance_api.payments.permissions import RequestPermission
 from codevance_api.payments.serializers import PaymentSerializer, AnticipationSerializer, RequestLogSerializer
 from codevance_api.payments.tasks import send_email
+from django.conf import settings
 
 
 class PaymentRetrieve(generics.RetrieveAPIView):
@@ -63,9 +64,10 @@ class AnticipationUpdate(generics.UpdateAPIView):
         RequestLog.objects.create(anticipation=serializer.instance,
                                   user=self.request.user,
                                   action=status)
-        send_email.delay_on_commit(sub=status,
-                                   recipient=[f'{serializer.instance.payment.supplier.user.email}'],
-                                   ant_id=serializer.instance.id)
+        if settings.CELERY_BROKER_URL is not None:
+            send_email.delay_on_commit(sub=status,
+                                       recipient=[f'{serializer.instance.payment.supplier.user.email}'],
+                                       ant_id=serializer.instance.id)
 
 
 class RequestLogList(generics.ListAPIView):
