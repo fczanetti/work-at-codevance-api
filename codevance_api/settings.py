@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from decouple import config, Csv
 from dj_database_url import parse as db_url
+import sentry_sdk
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -170,3 +171,17 @@ EMAIL_BACKEND = config('EMAIL_BACKEND')
 # Celery
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', default=None)
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# Sentry
+SENTRY_DSN = config('SENTRY_DSN', default=None)
+if SENTRY_DSN and not DEBUG:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+    )
