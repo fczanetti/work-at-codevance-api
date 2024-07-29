@@ -16,6 +16,7 @@ gunicorn = "*"
 django-storages = {extras = ["s3"], version = "*"}
 collectfast = "*"
 sentry-sdk = {extras = ["django"], version = "*"}
+django-debug-toolbar = "*"
 
 [dev-packages]
 flake8 = "*"

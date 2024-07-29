@@ -30,6 +30,8 @@ DEBUG = config('DEBUG', cast=bool, default=False)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='127.0.0.1')
 
+INTERNAL_IPS = config('INTERNAL_IPS', default='127.0.0.1', cast=Csv())
+
 AUTH_USER_MODEL = 'base.User'
 
 # Application definition
@@ -44,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'codevance_api.base',
-    'codevance_api.payments'
+    'codevance_api.payments',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -55,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'codevance_api.urls'
