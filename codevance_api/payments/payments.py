@@ -5,6 +5,7 @@ from codevance_api.payments.models import Payment, RequestLog
 from codevance_api.payments.serializers import AnticipationSerializer, PaymentSerializer
 from codevance_api.payments.tasks import send_email
 from rest_framework.serializers import ValidationError
+from django.conf import settings
 
 
 def calc_new_value(payment_id, new_date):
@@ -38,9 +39,10 @@ def create_anticipation(request):
         serializer.save(new_value=new_value)
         RequestLog.objects.create(anticipation=serializer.instance, user=request.user, action='R')
 
-        send_email.delay_on_commit(sub='new_ant',
-                                   recipient=[f'{serializer.instance.payment.supplier.user.email}'],
-                                   ant_id=serializer.instance.id)
+        if settings.CELERY_BROKER_URL is not None:
+            send_email.delay_on_commit(sub='new_ant',
+                                       recipient=[f'{serializer.instance.payment.supplier.user.email}'],
+                                       ant_id=serializer.instance.id)
 
         return serializer.data
 

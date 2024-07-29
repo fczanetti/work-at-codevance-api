@@ -113,10 +113,12 @@ def test_log_created_after_creating_anticipation(
 @mock.patch('codevance_api.payments.payments.send_email.delay_on_commit')
 def test_email_sent_after_creating_anticipations(mock_send_email,
                                                  auth_operator_01,
-                                                 payment_supplier_01):
+                                                 payment_supplier_01,
+                                                 settings):
     """
     Certifies an email is sent when an anticipation is created.
     """
+    settings.CELERY_BROKER_URL = 'some_value'
     new_due_date = date.today()
     data = {'payment': payment_supplier_01.pk, 'new_due_date': new_due_date}
     auth_operator_01.post('/api/anticipations/', data=data)

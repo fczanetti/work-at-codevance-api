@@ -212,21 +212,23 @@ cp contrib/env-sample .env
 
 5 - In the new .env file you have a variable called DATABASE_URL, and this is to be used with Docker. Comment it, so Django can connect with an sqlite3 database that it automatically creates for you.
 
-6 - Apply the database migrations. The database file (db.sqlite3) will be created when you run this command:
+6 - Comment another variable in your .env file called CELERY_BROKER_URL. This is not necessary now and, if not commented, can cause some errors when creating or updating anticipations;
+
+7 - Apply the database migrations. The database file (db.sqlite3) will be created when you run this command:
 
 ```
 python manage.py migrate
 ```
 
-7 - If you wish, you can [load some initial data](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#initial-data) in order to make it easier for you to start making requests.
+8 - If you wish, you can [load some initial data](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#initial-data) in order to make it easier for you to start making requests.
 
-8 - Run tests to make sure everything is working fine:
+9 - Run tests to make sure everything is working fine:
 
 ```
 pytest
 ```
 
-9 - You can now start Django server and test some requests.
+10 - You can now start Django server and test some requests.
 
 # How to install and test with Docker
 

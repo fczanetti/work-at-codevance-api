@@ -119,10 +119,12 @@ def test_log_created_after_updating_an_anticipation(
 @mock.patch('codevance_api.payments.payments.send_email.delay_on_commit')
 def test_email_sent_after_updating_anticipations(mock_send_email,
                                                  auth_operator_01,
-                                                 anticipation_payment_supp_01):
+                                                 anticipation_payment_supp_01,
+                                                 settings):
     """
     Certifies an email is sent when an anticipation is updated.
     """
+    settings.CELERY_BROKER_URL = 'some_value'
     data = {'status': 'A'}
     auth_operator_01.patch(f'/api/anticipations/{anticipation_payment_supp_01.pk}/', data=data)
     mock_send_email.assert_called_once_with(sub='A',
