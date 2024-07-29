@@ -15,6 +15,7 @@ djangorestframework-simplejwt = "*"
 gunicorn = "*"
 django-storages = {extras = ["s3"], version = "*"}
 collectfast = "*"
+sentry-sdk = {extras = ["django"], version = "*"}
 
 [dev-packages]
 flake8 = "*"

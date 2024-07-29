@@ -47,6 +47,8 @@ If necessary, you can check the requirementes [here](https://github.com/fczanett
    - [AWS](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#aws)
    - [SendGrid](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#sendgrid)
    - [CloudAMQP](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#cloudamqp)
+   - [Sentry](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#sentry)
+- [Main libraries](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#main-libraries)
 
 # Database models
  ```mermaid
@@ -740,3 +742,28 @@ In order to have a RabbitMQ service running, required to send emails, a suggesti
 
 - create a RabbitMQ free instance and access its main page;
 - in 'AMQP details', copy and save the URL shown to be used as our CELERY_BROKER_URL environment variable.
+
+### Sentry
+
+This project also has an integration with Sentry in order to catch errors that may be raised in production environment. To have the errors catched by Sentry:
+
+- create a project in Sentry platform:
+- after creating, copy the 'dsn' value informed by Sentry and use it to define the SENTRY_DSN environment variable.
+
+# Main libraries
+
+- Django: main framework used to build the application;
+- Django REST framework: used to build the REST API;
+- pytest-django: used to write all the tests;
+- python-decouple: used to deal with variables from development and production environments;
+- dj-database-url: used to parse the DATABASE_URL;
+- Psycopg2: used to connect Python and PostgreSQL database;
+- Celery: send emails asynchronously;
+- djangorestframework-simplejwt: JWT authentication;
+- Gunicorn: application server for production environment;
+- django-storages: used for static files storage in AWS S3 (Django Admin page);
+- Collectfast: more efficient 'collectstatic' command;
+- Sentry: catch errors in production environment;
+- flake8: code styling;
+- pytest-cov: generate test coverage reports;
+- codecov: upload and save test coverage reports.
