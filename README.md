@@ -234,7 +234,7 @@ pytest
 
 # How to install and test with Docker
 
-Installing this application with Docker will allow you to use Celery to send asynchronous emails when creating or updating an Anticipation. In the root of the project there's a 'docker-compose.yml' file, and this one will be responsible for creating a PostgreSQL and RabbitMQ instances for us.
+Installing this application with Docker will allow you to use Celery to send asynchronous emails to suppliers when creating or updating an Anticipation. In the root of the project there's a 'docker-compose.yml' file, and this one will be responsible for creating a PostgreSQL and RabbitMQ instances for us.
 
 1 - Follow the steps 1 to 4 from [this tutorial](https://github.com/fczanetti/work-at-codevance-api?tab=readme-ov-file#how-to-install-and-test);
 
