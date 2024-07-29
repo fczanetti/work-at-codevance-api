@@ -752,18 +752,19 @@ This project also has an integration with Sentry in order to catch errors that m
 
 # Main libraries
 
-- Django: main framework used to build the application;
-- Django REST framework: used to build the REST API;
-- pytest-django: used to write all the tests;
-- python-decouple: used to deal with variables from development and production environments;
-- dj-database-url: used to parse the DATABASE_URL;
-- Psycopg2: used to connect Python and PostgreSQL database;
-- Celery: send emails asynchronously;
-- djangorestframework-simplejwt: JWT authentication;
-- Gunicorn: application server for production environment;
-- django-storages: used for static files storage in AWS S3 (Django Admin page);
-- Collectfast: more efficient 'collectstatic' command;
-- Sentry: catch errors in production environment;
-- flake8: code styling;
-- pytest-cov: generate test coverage reports;
-- codecov: upload and save test coverage reports.
+- **Django**: main framework used to build the application;
+- **Django REST framework**: used to build the REST API;
+- **pytest-django**: used to write all the tests;
+- **python-decouple**: used to deal with variables from development and production environments;
+- **dj-database-url**: used to parse the DATABASE_URL;
+- **Psycopg2**: used to connect Python and PostgreSQL database;
+- **Celery**: send emails asynchronously;
+- **djangorestframework-simplejwt**: JWT authentication;
+- **Gunicorn**: application server for production environment;
+- **django-storages**: used for static files storage in AWS S3 (Django Admin page);
+- **Collectfast**: more efficient 'collectstatic' command;
+- **Sentry**: catch errors in production environment;
+- **flake8**: code styling;
+- **pytest-cov**: generate test coverage reports;
+- **codecov**: upload and save test coverage reports;
+- **django-debug-toolbar**: analyse database queries in development environment.
